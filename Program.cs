@@ -10,39 +10,31 @@ namespace CSharpListRemoveBenchmark
     [IterationCount(300)]
     public class MyBenchmarks
     {
-        private int myObjAmount = 800;
-        private float nullPercentTarget = 0.2f; // Percentage of values that will become null
+        private int myObjAmount = 400;
+        private float nullPercentTarget = 0.2f; // Percentage of values that will become null, every iteration, the myObjAmount will be multiplied by this value until it reaches minValuesToIterateEachCycle
         private int nullsToRemoveAll = 2; // Used in the two RemoveAllWhenNullCountIsMoreThanX functions
         private int onlyNullsAmount = 100000;
+        private int objAmountToIncreaseListSize = 400; // If our list has less values than objAmountToIncreaseListSize when we reach the benchmarked function end, we raise the next List size to objAmountToIncreaseListSize
         private List<MyObject?> list = [];
         private Random myRandom = new();
         // private HashSet<MyObject?> baseHashSet = [];
-        private List<MyObject?> baseList = [];
         private List<MyObject?> onlyNulls = [];
         private HashSet<MyObject?> valuesToRemove = [];
+        private List<int> possibleObjAmounts = [];
+        private int currentNullsCount = 0;
+        private int testNum = 0;
 
         [GlobalSetup]
         public void Setup()
         {
-            // myRandom = new();
-
-            // baseHashSet = new(myObjAmount);
-            // while (baseHashSet.Count < myObjAmount)
-            // {
-            //    baseHashSet.Add(new());
-            // }
-            // baseList = [..baseHashSet];
-            // int i = baseList.Count;
-            // while (i > 1)
-            // {
-            //    i--;
-            //    int j = myRandom.Next(i+1);
-            //    (baseList[i], baseList[j]) = (baseList[j], baseList[i]);
-            // }
-            baseList = new(myObjAmount);
-            while (baseList.Count < myObjAmount)
+            testNum = 0;
+            int tempObjAmount = myObjAmount;
+            possibleObjAmounts = []; //When myObjAmount is 800 and nullPercentTarget is 0.2, we will have [800,640,512,409,327,261,208,166,132,105,84,67,53,42,33,26,20,16,12,9,7,5,4,3,2,1] in the list, objAmountToIncreaseListSize removes the last elements from the list that are less than objAmountToIncreaseListSize
+            while (tempObjAmount >= objAmountToIncreaseListSize)
             {
-                baseList.Add(new());
+                Console.WriteLine(tempObjAmount);
+                possibleObjAmounts.Add(tempObjAmount);
+                tempObjAmount = (int)(tempObjAmount * (1f - nullPercentTarget));
             }
             onlyNulls = [..Enumerable.Repeat<MyObject?>(null, onlyNullsAmount)];
         }
@@ -50,15 +42,24 @@ namespace CSharpListRemoveBenchmark
         [IterationSetup]
         public void NextTest()
         {
-            list = [..baseList];
-            int removeCount = (int)(myObjAmount * nullPercentTarget);
+            currentNullsCount = 0;
+            if (testNum >= possibleObjAmounts.Count)
+            {
+                testNum = 0;
+            }
+            list = new(possibleObjAmounts[testNum]);
+            while (list.Count < possibleObjAmounts[testNum])
+            {
+                list.Add(new());
+            }
+            int removeCount = (int)(possibleObjAmounts[testNum] * nullPercentTarget);
             valuesToRemove = new(removeCount);
             while (valuesToRemove.Count < removeCount)
             {
-                valuesToRemove.Add(baseList[myRandom.Next(baseList.Count)]);
+                valuesToRemove.Add(list[myRandom.Next(list.Count)]);
             }
+            testNum++;
         }
-
 
         [Benchmark]
         public void ForwardIterate()
@@ -173,7 +174,7 @@ namespace CSharpListRemoveBenchmark
         }
 
         [Benchmark]
-        // In a real situation, we don't know which values to remove, we also have to iterate through a List without waiting if we want to give access to another for/white iterator to access the same list
+        // In a real situation, we don't know which values to remove, we also have to iterate through a List without waiting if we want to give access to another for/while iterator to access the same list
         public void RemoveAllPredicate()
         {
             list.RemoveAll(x => valuesToRemove.Contains(x));
@@ -208,7 +209,7 @@ namespace CSharpListRemoveBenchmark
         [Benchmark]
         public void ForwardRemoveAllWhenNullCountIsMoreThanX()
         {
-            int currentNullsCount = 0;
+            currentNullsCount = 0;
             for (int i = 0;i < list.Count;i++)
             {
                 if (valuesToRemove.Contains(list[i]))
@@ -232,7 +233,7 @@ namespace CSharpListRemoveBenchmark
         [Benchmark]
         public void BackwardRemoveAllWhenNullCountIsMoreThanX()
         {
-            int currentNullsCount = 0;
+            currentNullsCount = 0;
             for(int i = list.Count - 1;i >= 0;i--)
             {
                 if (valuesToRemove.Contains(list[i]))
@@ -280,25 +281,46 @@ namespace CSharpListRemoveBenchmark
         }
 
         [Benchmark]
-        public void MoveNullsToEnd()
+        public void SwapNullsToEnd()
         {
-            int writeIndex = 0;
-
-            // 1. Move all non-null values to the front
-            for (int i = 0; i < list.Count; i++)
+            int j = 0;
+            for (int i = 0;i < list.Count;i++)
             {
                 if (valuesToRemove.Contains(list[i]))
                 {
-                    list[writeIndex] = list[i];
-                    writeIndex++;
+                    list[j] = list[i];
+                    j++;
                 }
             }
-
-            // 2. Fill the rest of the list with null
-            while (writeIndex < list.Count)
+            for (int i = j;i < list.Count;i++)
             {
-                list[writeIndex] = null;
-                writeIndex++;
+                list[i] = null;
+            }
+        }
+
+        [Benchmark]
+        public void SwapNullsToEndIgnoringOrder()
+        {
+            int i = 0;
+            int j = list.Count - 1;
+
+            while (i < j)
+            {
+                while (i < j && !valuesToRemove.Contains(list[i]))
+                {
+                    i++;
+                }
+                while (i < j && valuesToRemove.Contains(list[i]))
+                {
+                    j--;
+                }
+                if (i < j)
+                {
+                    (list[j], list[i]) = (null, list[j]);
+
+                    i++;
+                    j--;
+                }
             }
         }
 

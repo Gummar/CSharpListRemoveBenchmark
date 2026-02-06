@@ -13,25 +13,26 @@ Different amount of values in a list gives different results.
 Output sample:
 
 ```
-| Method                                    | Mean       | Error      | StdDev     | Median     | Ratio | RatioSD |
-|------------------------------------------ |-----------:|-----------:|-----------:|-----------:|------:|--------:|
-| ForwardIterate                            |   5.374 us |  0.2657 us |   1.342 us |   4.800 us |  0.19 |    0.06 |
-| BackwardIterate                           |   4.468 us |  0.2118 us |   1.088 us |   4.000 us |  0.16 |    0.05 |
-| ForwardIterateWithCheck                   |  28.736 us |  0.9116 us |   4.587 us |  28.000 us |  1.02 |    0.22 |
-| BackwardIterateWithCheck                  |  27.183 us |  0.7592 us |   3.749 us |  26.850 us |  0.97 |    0.19 |
-| ForwardNull                               |  31.290 us |  1.0264 us |   5.031 us |  30.300 us |  1.11 |    0.24 |
-| BackwardNull                              |  30.237 us |  0.5701 us |   2.800 us |  29.100 us |  1.08 |    0.18 |
-| ForwardRemove                             | 119.577 us |  7.9446 us |  40.046 us |  97.300 us |  4.26 |    1.56 |
-| BackwardRemove                            | 162.349 us |  5.2653 us |  25.557 us | 170.000 us |  5.78 |    1.24 |
-| ForwardRemoveAt                           |  44.233 us |  0.6419 us |   3.134 us |  44.300 us |  1.57 |    0.25 |
-| BackwardRemoveAt                          |  43.508 us |  0.6917 us |   3.436 us |  42.100 us |  1.55 |    0.25 |
-| RemoveAllPredicate                        |  31.007 us |  0.4255 us |   2.069 us |  30.300 us |  1.10 |    0.17 |
-| ForwardRemoveAllAtPercentThreshold        |  38.102 us |  0.5625 us |   2.714 us |  37.050 us |  1.36 |    0.22 |
-| BackwardRemoveAllAtPercentThreshold       |  36.647 us |  0.4089 us |   2.012 us |  36.000 us |  1.30 |    0.20 |
-| ForwardRemoveAllWhenNullCountIsMoreThanX  | 259.687 us | 12.8488 us |  65.118 us | 241.000 us |  9.24 |    2.69 |
-| BackwardRemoveAllWhenNullCountIsMoreThanX | 236.752 us | 12.4826 us |  63.828 us | 208.950 us |  8.43 |    2.59 |
-| ForwardRemoveAllWhenNullFound             | 462.820 us | 22.3848 us | 114.865 us | 390.900 us | 16.48 |    4.75 |
-| BackwardRemoveAllWhenNullFound            | 387.473 us | 23.6624 us | 121.846 us | 309.200 us | 13.79 |    4.80 |
-| MoveNullsToEnd                            |  39.763 us |  1.4504 us |   7.217 us |  37.100 us |  1.42 |    0.33 |
-| IterateThrough100000Nulls                 |  53.499 us |  0.8104 us |   3.972 us |  52.700 us |  1.90 |    0.31 |
+| Method                                    | Mean       | Error     | StdDev     | Median     | Ratio | RatioSD |
+|------------------------------------------ |-----------:|----------:|-----------:|-----------:|------:|--------:|
+| ForwardIterate                            |   2.749 us | 0.1186 us |  0.6085 us |   2.550 us |  0.14 |    0.03 |
+| BackwardIterate                           |   2.430 us | 0.0910 us |  0.4593 us |   2.300 us |  0.13 |    0.02 |
+| ForwardIterateWithCheck                   |  19.383 us | 0.1794 us |  0.8925 us |  19.150 us |  1.00 |    0.06 |
+| BackwardIterateWithCheck                  |  18.358 us | 0.3154 us |  1.5637 us |  18.400 us |  0.95 |    0.09 |
+| ForwardNull                               |  20.540 us | 0.2074 us |  1.0085 us |  20.400 us |  1.06 |    0.07 |
+| BackwardNull                              |  19.748 us | 0.1322 us |  0.6326 us |  19.700 us |  1.02 |    0.06 |
+| ForwardRemove                             |  51.570 us | 1.5120 us |  7.2812 us |  53.100 us |  2.67 |    0.39 |
+| BackwardRemove                            |  56.524 us | 1.5857 us |  7.6057 us |  58.200 us |  2.92 |    0.41 |
+| ForwardRemoveAt                           |  26.201 us | 0.3627 us |  1.7947 us |  25.900 us |  1.35 |    0.11 |
+| BackwardRemoveAt                          |  24.936 us | 0.1649 us |  0.8038 us |  24.800 us |  1.29 |    0.07 |
+| RemoveAllPredicate                        |  20.290 us | 0.1392 us |  0.6704 us |  20.200 us |  1.05 |    0.06 |
+| ForwardRemoveAllAtPercentThreshold        |  24.243 us | 0.2832 us |  1.3933 us |  23.900 us |  1.25 |    0.09 |
+| BackwardRemoveAllAtPercentThreshold       |  24.574 us | 0.3536 us |  1.7132 us |  24.000 us |  1.27 |    0.10 |
+| ForwardRemoveAllWhenNullCountIsMoreThanX  |  83.479 us | 2.8381 us | 13.6675 us |  89.350 us |  4.32 |    0.73 |
+| BackwardRemoveAllWhenNullCountIsMoreThanX |  81.246 us | 2.5261 us | 12.2131 us |  83.700 us |  4.20 |    0.66 |
+| ForwardRemoveAllWhenNullFound             | 152.701 us | 5.8212 us | 29.5547 us | 161.050 us |  7.89 |    1.57 |
+| BackwardRemoveAllWhenNullFound            | 135.279 us | 6.0919 us | 30.1436 us | 145.750 us |  6.99 |    1.59 |
+| SwapNullsToEnd                            |  23.971 us | 0.3504 us |  1.7435 us |  23.900 us |  1.24 |    0.11 |
+| SwapNullsToEndIgnoringOrder               |  11.249 us | 0.2251 us |  1.1241 us |  11.100 us |  0.58 |    0.06 |
+| IterateThrough100000Nulls                 |  50.010 us | 0.3158 us |  1.5476 us |  49.300 us |  2.59 |    0.14 |
 ```
