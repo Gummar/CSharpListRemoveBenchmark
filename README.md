@@ -1,4 +1,4 @@
-Benchmark of different ways to remove items from a C# List.
+Benchmark of different ways to remove items from a C# List using BenchmarkDotNet.
 
 Instructions:
 
